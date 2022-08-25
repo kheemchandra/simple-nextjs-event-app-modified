@@ -3,25 +3,26 @@ import { useState } from 'react';
 import CommentList from './comment-list';
 import NewComment from './new-comment';
 import classes from './comments.module.css';
+ 
 
 function Comments(props) {
   const { eventId } = props;
 
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState([]);
-
+  
   function toggleCommentsHandler() {
     if(!showComments){
       fetch(`/api/comments/${eventId}`)
       .then(response => response.json())
-      .then(data => {        
+      .then(data => { 
         setComments(data.comments);
         setShowComments(true);
       })
     }else{
       setShowComments(false);
     }
-  }
+  } 
 
   function addCommentHandler(commentData) {
     // send data to API
@@ -33,11 +34,8 @@ function Comments(props) {
       body: JSON.stringify(commentData)
     })
     .then(response => response.json())
-    .then(data => {
-      const commentList = data.comments; 
-      if(commentList){
-        setComments(commentList);
-      }
+    .then(data => { 
+        setComments(data.comments); 
     });
   }
 

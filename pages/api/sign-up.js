@@ -1,4 +1,6 @@
-function handler(req, res){
+import { connectDB, getCollection } from '../../helpers/db-util';
+
+async function handler(req, res){
   if(req.method === 'POST'){
     const email = req.body.email;
 
@@ -7,18 +9,24 @@ function handler(req, res){
       return;
     }
 
-    fetch('https://nextjs-course-98db4-default-rtdb.firebaseio.com/creadentialS.json', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({email:email})
-    })
-    .then(response => response.json())
-    .then(data => {
-      res.status(201).json({message: 'Successfully registered!'})
+    let client;
 
-    });
+    try{
+      client = await connectDB(); 
+    }catch(error){
+      res.status(500).json({message: 'Cound not connect to database!'});
+      return;
+    }
+ 
+    try{
+      const collection = getCollection(client, 'newsletter');
+      await collection.insertOne({email: email});
+      res.status(201).json({message: 'Email address registered successfully!'});
+    }catch(error){
+      res.status(500).json({message: 'Email registration failed!'});
+    }
+
+    client.close();
 
   }
 }

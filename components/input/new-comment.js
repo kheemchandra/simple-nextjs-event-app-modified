@@ -33,6 +33,7 @@ function NewComment(props) {
       name: enteredName,
       text: enteredComment,
     });
+    setIsInvalid(false);
   }
 
   return (

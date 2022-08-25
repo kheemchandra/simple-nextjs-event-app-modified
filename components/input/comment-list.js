@@ -3,6 +3,10 @@ import classes from './comment-list.module.css';
 function CommentList(props) {
   const { comments } = props; 
 
+  if(!comments){
+    return <p>Something went wrong!</p>
+  }
+
   if(comments.length === 0){
     return <p>No comments!</p>
   }
@@ -10,7 +14,7 @@ function CommentList(props) {
   return (
     <ul className={classes.comments}>
       {comments.map(comment => (
-        <li key={comment.id}>
+        <li key={comment._id}>
           <p>{comment.text}</p>
           <div>
             By <address>{comment.name}</address>
