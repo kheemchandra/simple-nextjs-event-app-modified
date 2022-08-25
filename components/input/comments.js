@@ -14,8 +14,8 @@ function Comments(props) {
     if(!showComments){
       fetch(`/api/comments/${eventId}`)
       .then(response => response.json())
-      .then(data => { 
-        setComments(data.comments)
+      .then(data => {        
+        setComments(data.comments);
         setShowComments(true);
       })
     }else{
@@ -33,7 +33,12 @@ function Comments(props) {
       body: JSON.stringify(commentData)
     })
     .then(response => response.json())
-    .then(data => setComments(data.comments));
+    .then(data => {
+      const commentList = data.comments; 
+      if(commentList){
+        setComments(commentList);
+      }
+    });
   }
 
   return (

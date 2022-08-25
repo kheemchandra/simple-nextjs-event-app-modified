@@ -1,46 +1,55 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-export function buildPath(){
-  return path.join(process.cwd(), 'data', 'comments.json');
+export function buildPath() {
+  return path.join(process.cwd(), "data", "comments.json");
 }
 
-export function extractData(filePath){
+export function extractData(filePath) {
   const data = fs.readFileSync(filePath);
-  return JSON.parse(data)
+  return JSON.parse(data);
 }
 
-function handler(req, res){
+function handler(req, res) {
   const eventId = req.query.eventId;
 
-  if(req.method === 'GET'){
+  if (req.method === "GET") {
     const filePath = buildPath();
     const data = extractData(filePath);
-    const event = data.find(event => event.id === eventId); 
+    const event = data.find((event) => event.id === eventId);
 
     res.status(200).json({ comments: event ? event.comments : [] });
-
-  }else if(req.method === 'POST'){
+  } else if (req.method === "POST") {
     const filePath = buildPath();
     const data = extractData(filePath);
-    const { name, email, text} = req.body;
-    const idx = data.findIndex( event => event.id === eventId);
+    const { name, email, text } = req.body;
+    if (
+      !email.includes("@") ||
+      !name ||
+      name.trim() === "" ||
+      !text ||
+      text.trim() === ""
+    ) {
+      res.status(422).json({message: 'Invalid comment!'});
+      return;
+    }
+
+    const idx = data.findIndex((event) => event.id === eventId);
     let event = data[idx];
-    if(!event){
+    if (!event) {
       event = {
         id: eventId,
-        comments: [{id: new Date().toISOString(), name, email, text}]
+        comments: [{ id: new Date().toISOString(), name, email, text }],
       };
       data.push(event);
-    }else{
-      event.comments.push({id: new Date().toISOString(), name, email, text});
+    } else {
+      event.comments.push({ id: new Date().toISOString(), name, email, text });
       data[idx] = event;
     }
     fs.writeFileSync(filePath, JSON.stringify(data));
-    
-    res.status(201).json({ comments: event.comments})
-  }
 
+    res.status(201).json({ comments: event.comments });
+  }
 }
 
 export default handler;

@@ -1,14 +1,10 @@
 import classes from './comment-list.module.css';
 
 function CommentList(props) {
-  const { comments } = props;
-
-  if(!comments){
-    return <p>Loading...</p>
-  }
+  const { comments } = props; 
 
   if(comments.length === 0){
-    return <p>No comments added!</p>
+    return <p>No comments!</p>
   }
 
   return (
