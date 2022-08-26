@@ -4,7 +4,7 @@ function CommentList(props) {
   const { comments } = props; 
 
   if(!comments){
-    return <p>Something went wrong!</p>
+    return <p>Couldn't load comments!</p>
   }
 
   if(comments.length === 0){
